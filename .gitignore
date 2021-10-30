@@ -1,4 +1,4 @@
-# Django #
+# Django
 *.log
 *.pot
 *.pyc
@@ -6,13 +6,13 @@ __pycache__
 db.sqlite3
 media
 
-# Env #
+# Env
 .env
 
-# Backup files # 
+# Backup files
 *.bak 
 
-# Python # 
+# Python
 *.py[cod] 
 *$py.class 
 
@@ -37,3 +37,7 @@ wheels/
 
 # Jupyter Notebook 
 .ipynb_checkpoints 
+
+# Dataset
+data
+songs/
