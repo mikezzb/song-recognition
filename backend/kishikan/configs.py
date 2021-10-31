@@ -7,7 +7,7 @@ DATA_CONFIGS = {
 
 # Audio
 AUDIO_EXTENSIONS = ('.mp3', '.wav')
-SAMPLE_RATE = 44100
+SAMPLE_RATE = 22050
 
 # Fingerprinting
 FFT_WSIZE = 4096
