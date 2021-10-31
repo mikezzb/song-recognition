@@ -8,6 +8,8 @@ load_dotenv()
 
 k = Kishikan(os.getenv('MONGO_URI'))
 
+k.fingerprint("songs")
+
 app = Flask(__name__)
 
 @app.route("/")

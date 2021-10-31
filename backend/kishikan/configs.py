@@ -6,7 +6,7 @@ DATA_CONFIGS = {
 }
 
 # Audio
-AUDIO_EXTENSIONS = ('.mp3', '.wav')
+AUDIO_EXTENSIONS = set(['.mp3', '.wav'])
 SAMPLE_RATE = 22050
 
 # Fingerprinting

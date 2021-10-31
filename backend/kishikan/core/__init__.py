@@ -27,10 +27,10 @@ def fingerprint(y, sr=SAMPLE_RATE):
         sgram = np.ma.log10(sgram) * 10
         sgram[np.isneginf(sgram)] = 0
 
-    local_max = _get_img_peaks(sgram)
+    peaks = _get_img_peaks(sgram)
 
     # Return fingerprint hash
-    return _fingerprint_hashes(local_max)
+    return _fingerprint_hashes(peaks)
 
 def _get_img_peaks(im: np.ndarray):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON)
