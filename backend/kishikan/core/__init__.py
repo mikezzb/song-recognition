@@ -1,16 +1,17 @@
 import hashlib
+from typing import List
 import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from skimage.feature import peak_local_max
-
+from kishikan.types import Fingerprint
 from kishikan.configs import FAN_VALUE, FFT_OVERLAP_RATIO, FFT_WSIZE, LOCAL_MAX_EPSILON, SAMPLE_RATE, MIN_HASH_TIME_DELTA, MAX_HASH_TIME_DELTA, FINGERPRINT_REDUCTION
 
 FREQ_INDEX = 0
 TIME_INDEX = 1
 
 # Generate audio fingerprint from audio timeseries
-def fingerprint(y, sr=SAMPLE_RATE, verbose=False):
+def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprint]:
     # Spectrogram
     sgram = mlab.specgram(
         y,
@@ -32,7 +33,7 @@ def fingerprint(y, sr=SAMPLE_RATE, verbose=False):
     # Return fingerprint hash
     return _fingerprint_hashes(peaks)
 
-def _get_img_peaks(im: np.ndarray, verbose):
+def _get_img_peaks(im: np.ndarray, verbose: bool):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON)
     # plt the peaks
     if verbose:
@@ -43,7 +44,7 @@ def _get_img_peaks(im: np.ndarray, verbose):
         plt.show()
     return peaks
 
-def _fingerprint_hashes(peaks: np.ndarray):
+def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
     n = peaks.shape[0]
     fp = []
     # Sort peaks with respect to time

@@ -2,19 +2,6 @@ import hashlib
 import os
 from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROUDING, SAMPLE_RATE
 
-import pydub
-import numpy as np
-
-def read_audiofile(filename):
-    audiofile = pydub.AudioSegment.from_file(filename)
-    data = np.fromstring(audiofile.raw_data, np.int16)
-
-    channels = []
-    for chn in range(audiofile.channels):
-        channels.append(data[chn::audiofile.channels])
-
-    return channels, audiofile.frame_rate
-
 def get_audio_files(path: str, is_dir=True):
     audio_files = []
     if is_dir:

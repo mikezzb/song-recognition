@@ -6,9 +6,9 @@ from kishikan import Kishikan
 # load environment variables from .env
 load_dotenv()
 
-k = Kishikan(os.getenv('MONGO_URI'))
+ksk = Kishikan(os.getenv('MONGO_URI'))
 
-k.fingerprint("songs")
+ksk.fingerprint("songs")
 
 app = Flask(__name__)
 
