@@ -1,17 +1,22 @@
 import librosa
 import traceback
+import warnings
+from typing import Any, Dict, List
 from kishikan.configs import RANKING_NUM, ROUDING, SAMPLE_RATE
 from kishikan.utils import get_audio_files, md5, offset_to_seconds
 from kishikan.core import fingerprint
 from kishikan.db import Database
 
+# Ignore librosa load mp3 warning
+warnings.filterwarnings('ignore')
+
 class Kishikan:
-    def __init__(self, db_uri, db_name="kishikan", verbose=False):
+    def __init__(self, db_uri, db_name="kishikan", verbose=False) -> None:
         self.db = Database(db_uri, db_name)
         self.verbose = verbose
         self.__load_song_hashes()
 
-    def __load_song_hashes(self):
+    def __load_song_hashes(self) -> None:
         self.song_hashes = set(self.db.get_song_hashes())
         print(f"{len(self.song_hashes)} fingerprinted songs in db")
 
@@ -22,6 +27,7 @@ class Kishikan:
                 print(f'Skipped duplicated fingerprinting for {file_path}...')
                 continue
             try:
+                print(f"Fingerprinting for {file_name}{file_ext}...")
                 y, sr = librosa.load(file_path, mono=True, sr=SAMPLE_RATE)
                 fp = fingerprint(y, sr=sr, verbose=self.verbose)
                 if save:
@@ -38,7 +44,7 @@ class Kishikan:
                 traceback.print_exc()
                 print(f'Failed to fingerprint {file_path}:\n{e}')
 
-    def match(self, path):
+    def match(self, path) -> List[Dict[str, Any]]:
         # Fingerprint the input song
         fps = set(self.fingerprint(path, is_dir=False, save=False))
         # Find matching songs in db
