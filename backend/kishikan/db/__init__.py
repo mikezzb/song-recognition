@@ -2,8 +2,8 @@ import sys
 from collections import defaultdict
 from typing import List
 from pymongo import MongoClient
-from kishikan.configs import QUERY_BATCH_SIZE
 
+from kishikan.configs import QUERY_BATCH_SIZE
 from kishikan.types import Fingerprint
 
 class Database:

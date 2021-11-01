@@ -1,9 +1,7 @@
 from typing import Final
 
-DATA_CONFIGS = {
-    'DB_NAME': 'kishikan',
-    'DIR_NAME': '../songs',
-}
+# General
+ROUDING = 3
 
 # Audio
 AUDIO_EXTENSIONS = set(['.mp3', '.wav'])
@@ -20,5 +18,10 @@ MIN_HASH_TIME_DELTA = 0
 MAX_HASH_TIME_DELTA = 200
 FINGERPRINT_REDUCTION = 20
 
-# DB Query Configs
+# DB & API Configs
+DATA_CONFIGS = {
+    'DB_NAME': 'kishikan',
+    'DIR_NAME': '../songs',
+}
 QUERY_BATCH_SIZE = 1000
+RANKING_NUM = 3

@@ -10,7 +10,7 @@ FREQ_INDEX = 0
 TIME_INDEX = 1
 
 # Generate audio fingerprint from audio timeseries
-def fingerprint(y, sr=SAMPLE_RATE):
+def fingerprint(y, sr=SAMPLE_RATE, verbose=False):
     # Spectrogram
     sgram = mlab.specgram(
         y,
@@ -27,19 +27,20 @@ def fingerprint(y, sr=SAMPLE_RATE):
         sgram = np.ma.log10(sgram) * 10
         sgram[np.isneginf(sgram)] = 0
 
-    peaks = _get_img_peaks(sgram)
+    peaks = _get_img_peaks(sgram, verbose)
 
     # Return fingerprint hash
     return _fingerprint_hashes(peaks)
 
-def _get_img_peaks(im: np.ndarray):
+def _get_img_peaks(im: np.ndarray, verbose):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON)
-    print(f'Detected peaks {peaks.shape}')
     # plt the peaks
-    plt.imshow(im)
-    plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=1)
-    plt.gca().invert_yaxis()
-    plt.show()
+    if verbose:
+        print(f'Detected peaks {peaks.shape}')
+        plt.imshow(im)
+        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=1)
+        plt.gca().invert_yaxis()
+        plt.show()
     return peaks
 
 def _fingerprint_hashes(peaks: np.ndarray):
