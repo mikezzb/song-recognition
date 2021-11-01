@@ -44,9 +44,10 @@ class Kishikan:
                 traceback.print_exc()
                 print(f'Failed to fingerprint {file_path}:\n{e}')
 
-    def match(self, path) -> List[Dict[str, Any]]:
+    def match(self, audio, preloaded=False) -> List[Dict[str, Any]]:
         # Fingerprint the input song
-        fps = set(self.fingerprint(path, is_dir=False, save=False))
+        y, sr = audio if preloaded else librosa.load(audio, mono=True, sr=SAMPLE_RATE)
+        fps = set(fingerprint(y, sr=sr, verbose=self.verbose))
         # Find matching songs in db
         songs_matches = self.db.match_fingerprints(fps)
         # Rank songs

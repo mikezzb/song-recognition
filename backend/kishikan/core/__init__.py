@@ -20,9 +20,6 @@ def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprin
         window=mlab.window_hanning,
         noverlap=int(FFT_WSIZE * FFT_OVERLAP_RATIO)
     )[0]
-    """ scipy way
-    f, t, sgram = spectrogram(y, sr, 'hamming', FFT_WSIZE, int(FFT_WSIZE * FFT_OVERLAP_RATIO))  
-    """
     # Convert to db and ignore warning
     with np.errstate(divide='ignore'):
         sgram = np.ma.log10(sgram) * 10
