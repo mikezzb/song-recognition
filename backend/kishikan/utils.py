@@ -1,6 +1,6 @@
 import hashlib
 import os
-from kishikan.configs import AUDIO_EXTENSIONS
+from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, SAMPLE_RATE
 
 import pydub
 import numpy as np
@@ -36,3 +36,6 @@ def md5(filename):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
+
+def offset_to_seconds(offset: int) -> int:
+    return round(offset / SAMPLE_RATE * FFT_WSIZE * FFT_OVERLAP_RATIO, 3)

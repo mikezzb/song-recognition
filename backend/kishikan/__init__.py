@@ -1,7 +1,7 @@
 import librosa
 import traceback
 from kishikan.configs import SAMPLE_RATE
-from kishikan.utils import get_audio_files, md5
+from kishikan.utils import get_audio_files, md5, offset_to_seconds
 from kishikan.core import fingerprint
 from kishikan.db import Database
 
@@ -36,7 +36,15 @@ class Kishikan:
             except Exception as e:
                 traceback.print_exc()
                 print(f'Failed to fingerprint {file_path}:\n{e}')
-    
-    def match(self, path):
-        fp = self.fingerprint(path, is_dir=False, save=False)
 
+    def match(self, path):
+        fps = set(self.fingerprint(path, is_dir=False, save=False))
+        songs_matches = self.db.match_fingerprints(fps)
+        # Rank songs
+        ranks = []
+        for id, song in sorted(songs_matches.items(), key=lambda k_v: k_v[1]['matches'], reverse=True):
+            song_meta = self.db.get_song(id)
+            song["offset"] = offset_to_seconds(song["offset"])
+            song_meta.update(song)
+            ranks.append(song_meta)
+        return ranks
