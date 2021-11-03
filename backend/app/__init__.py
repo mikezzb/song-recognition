@@ -1,14 +1,15 @@
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from app.routes.songs import SongRecognizer
 from app.routes.player import Player
-from kishikan import Kishikan
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import Api
 
 # load environment variables from .env
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 @app.route("/")
