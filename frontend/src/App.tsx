@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.scss';
 import Navigator from './containers';
+import './init';
 
 const queryClient = new QueryClient();
 

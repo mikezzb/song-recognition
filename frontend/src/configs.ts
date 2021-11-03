@@ -1,12 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
 
 // Main
-export const RECORDER_BIT_RATE = 128;
-export const RECORD_SECONDS = 6;
+export const RECORDER_BIT_RATE = 192;
+export const RECORD_SECONDS = 10;
 
 // Axios
 export const SERVER_ADDRESS =
-  process.env.NODE_ENV === 'production' ? '' : 'http://localhost:4000';
+  process.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:5000';
 
 export const AXIOS_CONFIGS: AxiosRequestConfig = Object.freeze({
   baseURL: SERVER_ADDRESS,
