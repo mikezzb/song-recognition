@@ -24,11 +24,9 @@ def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprin
     with np.errstate(divide='ignore'):
         sgram = np.ma.log10(sgram) * 10
         sgram[np.isneginf(sgram)] = 0
-
     peaks = _get_img_peaks(sgram, verbose)
-
     # Return fingerprint hash
-    return _fingerprint_hashes(peaks)
+    return list(set(_fingerprint_hashes(peaks)))
 
 def _get_img_peaks(im: np.ndarray, verbose: bool):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON)
@@ -41,12 +39,16 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
         plt.show()
     return peaks
 
+# https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf
 def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
     n = peaks.shape[0]
     fp = []
     # Sort peaks with respect to time
     peaks = peaks[peaks[:, TIME_INDEX].argsort()]
+    # For every peaks[i] as an anchor point
     for i in range(n):
+        # Use range peaks[i + 1, i + FAN_VALUE] as points in target zone of the anchor point
+        # Use space (10x) for matching speed (10000x)
         for j in range(1, FAN_VALUE):
             if (i + j) < n:
                 t1 = peaks[i][TIME_INDEX]

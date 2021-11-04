@@ -1,6 +1,6 @@
-import sys
 from collections import defaultdict
-from typing import Dict, List
+import sys
+from typing import Dict, List, Tuple
 from pymongo import MongoClient
 
 from kishikan.configs import QUERY_BATCH_SIZE
@@ -39,14 +39,16 @@ class Database:
     def get_song(self, id) -> dict:
         return self.songs.find_one({"_id": id})
 
-    def match_fingerprints(self, fps: List[Fingerprint]) -> Dict[str, Dict[str, int]]:
+    def match_fingerprints(self, fps: List[Fingerprint]) -> Tuple[list, Dict[str, Dict[str, int]]]:
         hash_offset_map = defaultdict(list)
         for fp_hash, offset in fps:
             hash_offset_map[fp_hash].append(offset)
         hashes = list(hash_offset_map.keys())
         songs_matches = defaultdict(lambda: {
             "matches": 0,
-            "offset": sys.maxsize
+            "offsets": defaultdict(lambda: 0),
+            "max_offset": 0,
+            "min_offset": 0
         })
         for i in range(0, len(hashes), QUERY_BATCH_SIZE):
             items = list(self.fingerprints.find({
@@ -55,10 +57,13 @@ class Database:
                 }
             }))
             for fp in items:
-                songs_matches[fp["song_id"]]["matches"] += 1
+                fp_song = songs_matches[fp["song_id"]]
                 for offset in hash_offset_map[fp["fp_hash"]]:
                     match_offset = fp["offset"] - offset
-                    # If the match offset is earlier, use this as song offset
-                    if match_offset < songs_matches[fp["song_id"]]["offset"]:
-                        songs_matches[fp["song_id"]]["offset"] = match_offset
+                    if match_offset < fp_song["min_offset"]:
+                        fp_song["min_offset"] = match_offset
+                    if match_offset > fp_song["max_offset"]:
+                        fp_song["max_offset"] = match_offset
+                    fp_song["offsets"][match_offset] += 1
+                    fp_song["matches"] += 1
         return songs_matches
