@@ -1,8 +1,17 @@
 import hashlib
 import os
+from tempfile import SpooledTemporaryFile
 import numpy as np
 from collections import deque
+from pydub import AudioSegment
 from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROUDING, SAMPLE_RATE
+from typing import Union
+
+# Flask load the uploaded audio file in memory already, so the file can be in memory
+def load_audio(file: Union[str, SpooledTemporaryFile]):
+    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=2)
+    samples = np.array([s.get_array_of_samples() for s in sound.split_to_mono()])
+    return (samples, sound.frame_rate)
 
 def get_audio_files(path: str, is_dir=True):
     audio_files = []
