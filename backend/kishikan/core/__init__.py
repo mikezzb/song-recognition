@@ -37,11 +37,15 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     amps = im[tuple(peaks.T)]
     peaks = peaks[amps > AMP_MIN]
     # plt the peaks
-    print(f'Detected peaks {peaks.shape}')
     if verbose:
+        print(f'Detected peaks {peaks.shape}')
+        plt.figure(figsize=(10, 10))
         plt.imshow(im)
-        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=1)
+        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=8)
         plt.gca().invert_yaxis()
+        plt.title('Part of Spectrogram - Delicate - Taylor Swift')
+        plt.ylabel('Frequency')
+        plt.xlabel('Time')
         plt.show()
     return peaks
 

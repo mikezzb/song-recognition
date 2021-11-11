@@ -8,8 +8,8 @@ from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROU
 from typing import Union
 
 # Flask load the uploaded audio file in memory already, so the file can be in memory
-def load_audio(file: Union[str, SpooledTemporaryFile]):
-    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=2)
+def load_audio(file: Union[str, SpooledTemporaryFile], start_second=None, duration=None):
+    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=2, start_second=start_second, duration=duration)
     samples = np.array([s.get_array_of_samples() for s in sound.split_to_mono()])
     return (samples, sound.frame_rate)
 
