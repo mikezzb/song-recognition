@@ -42,3 +42,9 @@ wheels/
 data
 songs/
 test/
+billboard/
+billboard_test/
+dataset/
+
+
+temp/

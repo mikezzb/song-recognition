@@ -16,10 +16,11 @@ def load_audio(file: Union[str, SpooledTemporaryFile], start_second=None, durati
 def get_audio_files(path: str, is_dir=True):
     audio_files = []
     if is_dir:
-        for f in os.listdir(path):
-            name, ext = os.path.splitext(f)
-            if ext in AUDIO_EXTENSIONS:
-                audio_files.append((os.path.join(path, f), name, ext))
+        for root, dirs, files in os.walk(path):
+            for f in files:
+                name, ext = os.path.splitext(f)
+                if ext in AUDIO_EXTENSIONS:
+                    audio_files.append((os.path.join(root, f), name, ext))
     else:
         name, ext = os.path.splitext(path)
         if ext in AUDIO_EXTENSIONS:
