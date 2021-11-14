@@ -4,12 +4,12 @@ from tempfile import SpooledTemporaryFile
 import numpy as np
 from collections import deque
 from pydub import AudioSegment
-from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROUDING, SAMPLE_RATE
+from kishikan.configs import AUDIO_EXTENSIONS, CHANNELS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROUNDING, SAMPLE_RATE
 from typing import Union
 
 # Flask load the uploaded audio file in memory already, so the file can be in memory
 def load_audio(file: Union[str, SpooledTemporaryFile], start_second=None, duration=None):
-    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=2, start_second=start_second, duration=duration)
+    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=CHANNELS, start_second=start_second, duration=duration)
     samples = np.array([s.get_array_of_samples() for s in sound.split_to_mono()])
     return (samples, sound.frame_rate)
 
@@ -37,7 +37,7 @@ def md5(filename):
     return hash_md5.hexdigest()
 
 def offset_to_seconds(offset: int) -> int:
-    return round(offset / SAMPLE_RATE * FFT_WSIZE * FFT_OVERLAP_RATIO, ROUDING)
+    return round(offset / SAMPLE_RATE * FFT_WSIZE * FFT_OVERLAP_RATIO, ROUNDING)
 
 def max_sliding_window(nums: np.ndarray, k: int):
     result = []

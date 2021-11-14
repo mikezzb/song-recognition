@@ -1,14 +1,15 @@
 from typing import Final
 
 # General
-ROUDING = 3
+ROUNDING = 3
 
 # Audio
 AUDIO_EXTENSIONS = set(['.mp3', '.wav'])
-SAMPLE_RATE = 44100
+SAMPLE_RATE = 8000
+CHANNELS = 1
 
 # Fingerprinting
-FFT_WSIZE = 4096
+FFT_WSIZE = 1024
 FFT_OVERLAP_RATIO = 0.5
 FAN_VALUE = 5
 LOCAL_MAX_EPSILON = 10

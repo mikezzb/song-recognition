@@ -65,7 +65,7 @@ class Kishikan:
 
         for id, stat in songs_occ.items():
             match_offsets_range = stat["max_offset"] - stat["min_offset"]
-            counts = np.full(match_offsets_range + 1, -1)
+            counts = np.full(match_offsets_range + 1, 0)
             # convert offset-offset_matches dict to array with count or 0 as element
             for offset, matches in stat["offsets"].items():
                 counts[offset - stat["min_offset"]] = matches
