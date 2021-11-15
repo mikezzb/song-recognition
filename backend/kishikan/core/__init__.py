@@ -1,4 +1,5 @@
 import hashlib
+import librosa
 from typing import List
 import numpy as np
 import matplotlib.mlab as mlab
@@ -11,24 +12,18 @@ FREQ_INDEX = 0
 TIME_INDEX = 1
 
 # Generate audio fingerprint from audio timeseries
-def fingerprint(ch: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprint]:
-    fps = set()
-    for audio in ch:
-        # Spectrogram
-        sgram = mlab.specgram(
-            audio,
-            NFFT=FFT_WSIZE,
-            Fs=sr,
-            window=mlab.window_hanning,
-            noverlap=int(FFT_WSIZE * FFT_OVERLAP_RATIO)
-        )[0]
-        # Convert to db and ignore warning
-        with np.errstate(divide='ignore'):
-            sgram = np.ma.log10(sgram) * 10
-            sgram[np.isneginf(sgram)] = 0
-        peaks = _get_img_peaks(sgram, verbose)
-        fps.update(_fingerprint_hashes(peaks)) 
-    return list(fps)
+def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprint]:
+    # Spectrogram
+    S = librosa.stft(
+        y,
+        n_fft=FFT_WSIZE,
+        window='hann',
+        hop_length=int(FFT_WSIZE * FFT_OVERLAP_RATIO)
+    )
+    S_db = librosa.amplitude_to_db(np.abs(S))
+    peaks = _get_img_peaks(S_db, verbose)
+    return list(set(_fingerprint_hashes(peaks)))
+
 
 def _get_img_peaks(im: np.ndarray, verbose: bool):
     # Find local max within neighborhood of LOCAL_MAX_EPSILON
@@ -41,15 +36,16 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
         print(f'Detected peaks {peaks.shape}')
         plt.figure(figsize=(10, 10))
         plt.imshow(im)
-        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=8)
+        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=1)
         plt.gca().invert_yaxis()
-        plt.title('Part of Spectrogram - Delicate - Taylor Swift')
+        plt.title('Spectrogram')
         plt.ylabel('Frequency')
         plt.xlabel('Time')
         plt.show()
     return peaks
 
 # https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf
+# https://www.music-ir.org/mirex/abstracts/2019/LKZL1.pdf
 def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
     n = peaks.shape[0]
     fp = []
@@ -67,6 +63,6 @@ def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
                 if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:  
                     f1 = peaks[i][FREQ_INDEX]
                     f2 = peaks[i + j][FREQ_INDEX]
-                    h = hashlib.sha1(f"{f1}|{f2}|{t_delta}".encode('utf-8'))
+                    h = hashlib.sha1(f"{f1}|{f2 - f1}|{t_delta}".encode('utf-8'))
                     fp.append((h.hexdigest()[0:FINGERPRINT_REDUCTION], t1))
     return fp

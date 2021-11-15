@@ -20,17 +20,19 @@ def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks
     score = 0
     hits = defaultdict(lambda: 0)
     fails = []
-    for file_path, file_name, file_ext in query_files:
-        label, duration, offset = GTZAN_query_label_split(file_name)
-        rank = ksk.match(file_path)
-        # Find the rank of label in predictions, None if not in top n
-        label_index = next((idx for (idx, d) in enumerate(rank) if d["name"] == label), None)
+    exceptions = []
+    for idx, (file_path, file_name, file_ext) in enumerate(query_files):
         try:
+            label, duration, offset = GTZAN_query_label_split(file_name)
+            rank = ksk.match(file_path)
+            # Find the rank of label in predictions, None if not in top n
+            label_index = next((idx for (idx, d) in enumerate(rank) if d["name"] == label), None) if rank else None
             pred_label = rank[0]["name"]
-        except IndexError:
+        except Exception as e:
+            exceptions.append(e)
             pred_label = None
         if verbose:
-            print(f"Result for {file_name} ({pred_label == label}): {pred_label}")
+            print(f"({idx}/{num_query_files}) Result for {file_name} ({pred_label == label}): {pred_label}")
         if label_index is None or label_index > FAIL_RECORD_THREHOLD:
             fails.append({
                 "query": f"{file_name}{file_ext}",

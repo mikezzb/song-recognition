@@ -2,16 +2,15 @@ import hashlib
 import os
 from tempfile import SpooledTemporaryFile
 import numpy as np
+import librosa
 from collections import deque
 from pydub import AudioSegment
-from kishikan.configs import AUDIO_EXTENSIONS, CHANNELS, FFT_OVERLAP_RATIO, FFT_WSIZE, ROUNDING, SAMPLE_RATE
+from kishikan.configs import AUDIO_EXTENSIONS, FFT_OVERLAP_RATIO, FFT_WSIZE, MONO, ROUNDING, SAMPLE_RATE
 from typing import Union
 
 # Flask load the uploaded audio file in memory already, so the file can be in memory
-def load_audio(file: Union[str, SpooledTemporaryFile], start_second=None, duration=None):
-    sound = AudioSegment.from_file(file, frame_rate=SAMPLE_RATE, channels=CHANNELS, start_second=start_second, duration=duration)
-    samples = np.array([s.get_array_of_samples() for s in sound.split_to_mono()])
-    return (samples, sound.frame_rate)
+def load_audio(file: Union[str, SpooledTemporaryFile], offset=0.0, duration=None):
+    return librosa.load(file, sr=SAMPLE_RATE, mono=MONO, offset=offset, duration=duration)
 
 def get_audio_files(path: str, is_dir=True):
     audio_files = []
@@ -40,17 +39,17 @@ def offset_to_seconds(offset: int) -> int:
     return round(offset / SAMPLE_RATE * FFT_WSIZE * FFT_OVERLAP_RATIO, ROUNDING)
 
 def max_sliding_window(nums: np.ndarray, k: int):
-    result = []
-    end_index = 0
-    dq = deque()
-    for i in range(len(nums)):
-        while dq and nums[dq[-1]] < nums[i]:
-            dq.pop()
-        dq.append(i)
-        while dq and i - dq[0] >= k:
-            dq.popleft()
-        if i >= k - 1:
-            result.append(nums[dq[0]])
-            end_index = i
-    # Remove dup by return len(result)
-    return sum(result), end_index - k
+    end_index = k
+    if k == 1:
+        return nums
+    d = deque()
+    res = []
+    for i, n in enumerate(nums):
+        while d and nums[d[-1]] < n:
+            d.pop()
+        d.append(i)
+        if d[0] == i-k:
+            d.popleft()
+        if i >= k-1:
+            res.append(nums[d[0]])
+    return sum(res), end_index - k

@@ -53,6 +53,8 @@ class Kishikan:
         y, sr = audio if preloaded else load_audio(audio)
         fps = fingerprint(y, sr=sr, verbose=self.verbose)
         num_fps = len(fps)
+        if num_fps == 0:
+            return None
         # Find matching songs in db
         songs_occ = self.db.match_fingerprints(fps)
         # Rank songs
