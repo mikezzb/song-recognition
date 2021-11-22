@@ -4,7 +4,7 @@ import numpy as np
 from typing import Any, Dict, List
 
 from kishikan.configs import RANKING_NUM, SAMPLE_RATE
-from kishikan.utils import load_audio, get_audio_files, max_sliding_window, md5, offset_to_seconds
+from kishikan.utils import get_song_metadata, load_audio, get_audio_files, max_sliding_window, md5, offset_to_seconds, parallel
 from kishikan.core import fingerprint
 from kishikan.db import Database
 
@@ -21,29 +21,27 @@ class Kishikan:
         self.song_hashes = set(self.db.get_song_hashes())
         print(f"{len(self.song_hashes)} fingerprinted songs in db")
 
-    def fingerprint(self, path, is_dir=True, save=True):
+    def fingerprint(self, path, is_dir=True, save_meta=False):
         for file_path, file_name, file_ext in get_audio_files(path, is_dir=is_dir):
             audio_md5 = md5(file_path)
-            if audio_md5 in self.song_hashes and save:
+            if audio_md5 in self.song_hashes:
                 if self.verbose:
                     print(f'Skipped duplicated fingerprinting for {file_path}...')
-                continue
+                return
             try:
                 print(f"Fingerprinting for {file_name}{file_ext}...")
                 y, sr = load_audio(file_path)
                 fps = fingerprint(y, sr=sr, verbose=self.verbose)
                 num_fps = len(fps)
-                if save:
-                    # Add song hash in db
-                    self.song_hashes.add(audio_md5)
-                    self.db.insert_song(audio_md5, meta={
-                        "name": file_name,
-                        "ext": file_ext,
-                        "num_fingerprints": num_fps
-                    })
-                    self.db.insert_fingerprints(fps, audio_md5)
+                # Add song hash in db
+                self.song_hashes.add(audio_md5)
+                if save_meta:
+                    meta = get_song_metadata(file_path)
+                    meta["ext"] = file_ext
                 else:
-                    return fps
+                    meta = None
+                self.db.insert_song(audio_md5, num_fps, meta=meta)
+                self.db.insert_fingerprints(fps, audio_md5)
             except Exception as e:
                 traceback.print_exc()
                 print(f'Failed to fingerprint {file_path}:\n{e}')

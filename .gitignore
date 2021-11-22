@@ -39,12 +39,7 @@ wheels/
 .ipynb_checkpoints 
 
 # Dataset
-data
-songs/
-test/
-billboard/
-billboard_test/
-dataset/
+datasets/
 
 
 results/

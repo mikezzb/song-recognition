@@ -17,7 +17,7 @@ def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprin
     S = librosa.stft(
         y,
         n_fft=FFT_WSIZE,
-        window='hann',
+        window='hamm',
         hop_length=int(FFT_WSIZE * FFT_OVERLAP_RATIO)
     )
     S_db = librosa.amplitude_to_db(np.abs(S))

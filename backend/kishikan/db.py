@@ -1,9 +1,8 @@
 from collections import defaultdict
-import sys
 from typing import Dict, List, Tuple
 from pymongo import MongoClient
 
-from kishikan.configs import QUERY_BATCH_SIZE
+from kishikan.configs import DATA_CONFIGS, QUERY_BATCH_SIZE
 from kishikan.types import Fingerprint
 
 class Database:
@@ -12,6 +11,7 @@ class Database:
         self.db = client[name]  # Collection
         self.fingerprints = self.db["fingerprints"]
         self.songs = self.db["songs"]
+        self.metadata = client[DATA_CONFIGS["METADATA_DB_NAME"]]['metadata']
         # Create index for fingerprint hash to speed up matching
         self.fingerprints.create_index("fp_hash")
 
@@ -22,9 +22,14 @@ class Database:
             "offset": int(offset),  # type cast np.int64 to normal int
         } for fp_hash, offset in fps])
 
-    def insert_song(self, id: str, meta: dict = {}):
+    def insert_song(self, id: str, num_fps: int, meta):
         meta["_id"] = id
-        self.songs.insert(meta)
+        self.songs.insert({
+            "_id": id,
+            "num_fingerprints": num_fps
+        })
+        if meta:
+            self.metadata.insert(meta)
 
     def get_song_hashes(self) -> List[str]:
         songs = list(self.songs.aggregate([
@@ -37,7 +42,7 @@ class Database:
         return [song["_id"] for song in songs]
 
     def get_song(self, id) -> dict:
-        return self.songs.find_one({"_id": id})
+        return self.metadata.find_one({"_id": id})
 
     def match_fingerprints(self, fps: List[Fingerprint]) -> Tuple[list, Dict[str, Dict[str, int]]]:
         hash_offset_map = defaultdict(list)
