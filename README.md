@@ -1,3 +1,6 @@
+### Requirements
+* ffmpeg (required by librosa to load mp3)
+
 ### Environment Setup
 `.env`
 ```env
