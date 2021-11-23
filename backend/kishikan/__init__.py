@@ -81,7 +81,7 @@ class Kishikan:
         for id, matches, start_offset in scores[:RANKING_NUM]:
             # Fetch song metadata in db, and concat with prediction info in ranking
             song = self.db.get_song(id)
-            song["matches"] = matches
+            song["matches"] = int(matches)
             song["offset"] = offset_to_seconds(start_offset)
             ranks.append(song)
         return ranks

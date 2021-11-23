@@ -3,9 +3,9 @@ from flask_restful import abort, reqparse, Resource
 import numpy as np
 from pydub import AudioSegment
 from werkzeug.datastructures import FileStorage
+from nazo import Nazo
 from kishikan import Kishikan
-from kishikan.utils import load_audio
-import librosa
+from app.utils import load_audio
 
 ksk = Kishikan(os.getenv('MONGO_URI'))
 
@@ -20,6 +20,20 @@ class SongRecognizer(Resource):
             audio_file = args['audio']
             audio = load_audio(audio_file.stream)
             return ksk.match(audio, preloaded=True)
+        except Exception as e:
+            print(e)
+            abort(400, description='Cannot convert audio')
+
+
+nz = Nazo(os.getenv('MONGO_URI'))
+
+class QueryByHummingRecognizer(Resource):
+    def post(self):
+        try:
+            args = parser.parse_args()
+            audio_file = args['audio']
+            audio = load_audio(audio_file.stream)
+            return nz.query(audio, preloaded=True)
         except Exception as e:
             print(e)
             abort(400, description='Cannot convert audio')

@@ -42,7 +42,7 @@ class Database:
         return [song["_id"] for song in songs]
 
     def get_song(self, id) -> dict:
-        return self.metadata.find_one({"_id": id})
+        return self.metadata.find_one({"_id": id}, {"extra": 0})
 
     def match_fingerprints(self, fps: List[Fingerprint]) -> Tuple[list, Dict[str, Dict[str, int]]]:
         hash_offset_map = defaultdict(list)
