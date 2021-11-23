@@ -21,15 +21,22 @@ class UserStore extends StorePrototype {
     makeObservable(this);
   }
 
-  @action async init() {
-    this.loadStore();
-  }
-
   get fingerprintHistory() {
     return this.history.filter(song => song.mode === Mode.FINGERPRINT);
   }
   get qbhHistory() {
     return this.history.filter(song => song.mode === Mode.QBH);
+  }
+
+  @action init() {
+    this.loadStore();
+  }
+
+  @action toggleMode() {
+    this.setStore(
+      'mode',
+      this.mode === Mode.FINGERPRINT ? Mode.QBH : Mode.FINGERPRINT
+    );
   }
 }
 

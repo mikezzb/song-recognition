@@ -2,12 +2,15 @@ import { useState } from 'react';
 import MicRecorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
 import { IconButton, Typography } from '@material-ui/core';
-import { AudiotrackRounded } from '@material-ui/icons';
+import { AudiotrackRounded, GraphicEqRounded } from '@material-ui/icons';
 
+import { observer } from 'mobx-react-lite';
 import { RECORDER_BIT_RATE, RECORD_SECONDS } from '../configs';
 import './HomePage.scss';
 import { QUERY_BY_HUMMING, RECOGNIZE } from '../constants/apis';
 import Header from '../components/Header';
+import { useUser } from '../hooks';
+import { Mode } from '../types';
 
 enum HomePageState {
   INIT,
@@ -26,6 +29,7 @@ const HomePage = () => {
   const [state, setState] = useState(HomePageState.INIT);
   const [mode, setMode] = useState(HomePageMode.FINGERPRINT);
   const [result, setResult] = useState(null);
+  const user = useUser();
 
   const recognize = async (file?: File) => {
     setResult(null);
@@ -70,11 +74,17 @@ const HomePage = () => {
       <Header />
       <div className="column center">
         <Typography className="banner-text" variant="h2" component="div">
-          Tap to recognize your song
+          {`Tap to recognize your ${
+            user.mode === Mode.FINGERPRINT ? 'song' : 'humming'
+          }`}
         </Typography>
         {state === HomePageState.INIT && (
           <IconButton className="query-btn" onClick={() => recognize()}>
-            <AudiotrackRounded />
+            {user.mode === Mode.FINGERPRINT ? (
+              <AudiotrackRounded />
+            ) : (
+              <GraphicEqRounded />
+            )}
           </IconButton>
         )}
       </div>
@@ -83,4 +93,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default observer(HomePage);
