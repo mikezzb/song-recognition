@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import MicRecorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
 import { Button, IconButton, Typography } from '@material-ui/core';
 import { AudiotrackRounded, GraphicEqRounded } from '@material-ui/icons';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
+import { useDropzone } from 'react-dropzone';
 import { RECORDER_BIT_RATE, RECORD_SECONDS } from '../configs';
 import './HomePage.scss';
 import { QUERY_BY_HUMMING, RECOGNIZE } from '../constants/apis';
@@ -31,8 +32,17 @@ const HomePage = () => {
   const [result, setResult] = useState<null | Song[]>(null);
   const user = useUser();
 
+  const onDrop = useCallback(files => {
+    recognize(files[0]);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
+
   const recognize = async (file?: File) => {
     const audio = file || (await record());
+    setState(HomePageState.RECOGNIZING);
     if (audio === null) {
       return;
     }
@@ -56,8 +66,6 @@ const HomePage = () => {
       await recorder.start();
       setState(HomePageState.RECORDING);
       await new Promise(resolve => setTimeout(resolve, RECORD_SECONDS * 1000));
-      setState(HomePageState.RECOGNIZING);
-
       // Get file and call API
       const [buffer, blob] = await recorder.stop().getMp3();
       const now = +new Date();
@@ -72,7 +80,7 @@ const HomePage = () => {
     }
   };
   return (
-    <div className="homepage page center column">
+    <div className="homepage page center column" {...getRootProps()}>
       <div className="column center">
         {state !== HomePageState.RESULT && (
           <>
@@ -117,6 +125,7 @@ const HomePage = () => {
           </Button>
         </>
       )}
+      <input {...getInputProps()} />
     </div>
   );
 };
