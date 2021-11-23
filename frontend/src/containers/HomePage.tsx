@@ -1,38 +1,37 @@
 import { useState } from 'react';
 import MicRecorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
-import { IconButton, Typography } from '@material-ui/core';
+import { Button, IconButton, Typography } from '@material-ui/core';
 import { AudiotrackRounded, GraphicEqRounded } from '@material-ui/icons';
-
+import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import { RECORDER_BIT_RATE, RECORD_SECONDS } from '../configs';
 import './HomePage.scss';
 import { QUERY_BY_HUMMING, RECOGNIZE } from '../constants/apis';
-import Header from '../components/Header';
 import { useUser } from '../hooks';
-import { Mode } from '../types';
+import { Mode, Song } from '../types';
+import SongList from '../components/SongList';
 
 enum HomePageState {
   INIT,
   RECORDING,
   RECOGNIZING,
-}
-
-enum HomePageMode {
-  FINGERPRINT,
-  QBH,
+  RESULT,
 }
 
 const recorder = new MicRecorder({ bitRate: RECORDER_BIT_RATE });
 
+const PHRASES = {
+  [HomePageState.RECORDING]: 'Recording...',
+  [HomePageState.RECOGNIZING]: 'Just a moment...',
+};
+
 const HomePage = () => {
   const [state, setState] = useState(HomePageState.INIT);
-  const [mode, setMode] = useState(HomePageMode.FINGERPRINT);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<null | Song[]>(null);
   const user = useUser();
 
   const recognize = async (file?: File) => {
-    setResult(null);
     const audio = file || (await record());
     if (audio === null) {
       return;
@@ -40,12 +39,15 @@ const HomePage = () => {
     const formData = new FormData();
     formData.append('audio', audio, audio.name);
     const res = await axios({
-      ...(mode === HomePageMode.FINGERPRINT ? RECOGNIZE : QUERY_BY_HUMMING),
+      ...(user.mode === Mode.FINGERPRINT ? RECOGNIZE : QUERY_BY_HUMMING),
       data: formData,
     });
 
-    setResult(JSON.stringify(res.data));
-    setState(HomePageState.INIT);
+    setResult(res.data);
+    setState(HomePageState.RESULT);
+    if (res.data?.length !== 0) {
+      user.appendHistory(res.data[0]);
+    }
   };
 
   const record = async (): Promise<File | null> => {
@@ -70,25 +72,51 @@ const HomePage = () => {
     }
   };
   return (
-    <div className="homepage page center">
-      <Header />
+    <div className="homepage page center column">
       <div className="column center">
-        <Typography className="banner-text" variant="h2" component="div">
-          {`Tap to recognize your ${
-            user.mode === Mode.FINGERPRINT ? 'song' : 'humming'
-          }`}
-        </Typography>
-        {state === HomePageState.INIT && (
-          <IconButton className="query-btn" onClick={() => recognize()}>
-            {user.mode === Mode.FINGERPRINT ? (
-              <AudiotrackRounded />
-            ) : (
-              <GraphicEqRounded />
-            )}
-          </IconButton>
+        {state !== HomePageState.RESULT && (
+          <>
+            <Typography
+              className={clsx(
+                'banner-text',
+                state === HomePageState.INIT && 'deco-line'
+              )}
+              variant="h2"
+              component="div"
+            >
+              {state === HomePageState.INIT
+                ? `Tap to recognize your ${
+                    user.mode === Mode.FINGERPRINT ? 'song' : 'humming'
+                  }`
+                : PHRASES[state]}
+            </Typography>
+            <IconButton className="query-btn" onClick={() => recognize()}>
+              {user.mode === Mode.FINGERPRINT ? (
+                <AudiotrackRounded />
+              ) : (
+                <GraphicEqRounded />
+              )}
+            </IconButton>
+          </>
         )}
       </div>
-      {Boolean(result) && <p>{result}</p>}
+      {state === HomePageState.RESULT && (
+        <>
+          {result?.length ? (
+            <SongList songs={result} />
+          ) : (
+            <span>Unable to identify the song...</span>
+          )}
+          <Button
+            color="secondary"
+            variant="contained"
+            className="try-btn"
+            onClick={() => recognize()}
+          >
+            Try Again
+          </Button>
+        </>
+      )}
     </div>
   );
 };

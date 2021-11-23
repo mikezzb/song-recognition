@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 import { GET_SONGS } from '../constants/apis';
 import { useUser } from '../hooks';
 import './SongPage.scss';
@@ -18,7 +19,7 @@ const SongPage = () => {
     enabled: location.pathname === '/song',
   });
   return (
-    <div className="page">
+    <div className="song-page page">
       <SongList
         wrap
         loading={songsLoading}
@@ -28,4 +29,4 @@ const SongPage = () => {
   );
 };
 
-export default SongPage;
+export default observer(SongPage);

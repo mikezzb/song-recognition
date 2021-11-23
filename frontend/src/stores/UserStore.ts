@@ -45,7 +45,7 @@ class UserStore extends StorePrototype {
   }
 
   @action appendHistory(song: Song) {
-    this.updateStore('history', [
+    this.setStore('history', [
       ...this.history,
       {
         ...song,

@@ -28,6 +28,14 @@
       background-color: var(--accent-2);
     }
   }
+  .try-btn {
+    font-weight: 600;
+    background: var(--accent-3);
+    margin-top: 12px;
+    &:hover {
+      background-color: var(--accent-1);
+    }
+  }
 }
 
 @keyframes spin {
