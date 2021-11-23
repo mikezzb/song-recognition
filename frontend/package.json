@@ -46,7 +46,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepare": "cd .. && husky install frontend/.husky"
+    "prepare": "cd .. && husky install frontend/.husky",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src"
   },
   "eslintConfig": {
     "extends": [

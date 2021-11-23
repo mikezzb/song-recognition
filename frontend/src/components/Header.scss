@@ -1,0 +1,17 @@
+header {
+  position: fixed;
+  width: 100vw;
+  top: 20px;
+  justify-content: space-between;
+  max-width: var(--max-width);
+  margin: 0 20px;
+  .nav-container {
+    column-gap: 16px;
+    > a {
+      display: inline-flex;
+      svg {
+        font-size: 30px; 
+      }
+    }
+  }
+}
