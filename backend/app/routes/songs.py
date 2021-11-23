@@ -6,6 +6,7 @@ from werkzeug.datastructures import FileStorage
 from nazo import Nazo
 from kishikan import Kishikan
 from app.utils import load_audio
+from app.db import db
 
 ksk = Kishikan(os.getenv('MONGO_URI'))
 
@@ -37,3 +38,8 @@ class QueryByHummingRecognizer(Resource):
         except Exception as e:
             print(e)
             abort(400, description='Cannot convert audio')
+
+class Song(Resource):
+    def get(self):
+        # Get all song metadata
+        return list(db.get_all_songs())

@@ -85,6 +85,5 @@ class Kishikan:
             song = self.db.get_song(id)
             song["match"] = round(matches / top_n_total_matches, 4)
             song["offset"] = offset_to_seconds(start_offset)
-            print(song["title"])
             ranks.append(song)
         return ranks
