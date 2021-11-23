@@ -26,8 +26,17 @@ def midi_to_pitches(file):
 
 def pitches_to_series(pitches: np.ndarray):
     series = None
+    carry = 0
     for pitch, duration in pitches:
-        num_pvs = int(duration * PITCHES_PER_SECOND)
+        carry += duration * PITCHES_PER_SECOND
+        num_pvs = duration * PITCHES_PER_SECOND
+        mod = num_pvs % 1
+        num_pvs = int(num_pvs)
+        carry += mod
+        if carry > 1:
+            num_pvs += 1
+            carry -= 1
+        print(f"{duration}: {num_pvs}")
         note_pvs = np.full(num_pvs, pitch, dtype=np.float)
         series = np.concatenate([series, note_pvs]) if series is not None else note_pvs
     return series
