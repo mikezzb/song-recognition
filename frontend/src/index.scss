@@ -7,7 +7,16 @@ body {
   --primary: #e21061;
   --accent: #f06292;
   --button: rgba(21, 121, 193, 1);
+  --bg: #181818;
+  --surface: #222;
+  --bg-1: #2196f3;
+  --bg-2: rgba(124, 111, 211, 1);
+  --accent-1: #f50057;
+  --accent-3: #e21061;
+  --accent-2: #4fb3ff;
   --max-width: 1260px;
+  --sp: 12px;
+  --border-radius: 12px;
   color: white;
 }
 
@@ -41,4 +50,18 @@ a {
 .column {
   display: flex;
   flex-direction: column;
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+}
+
+.ellipsis-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  margin-top: 5px;
 }

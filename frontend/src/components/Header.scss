@@ -4,9 +4,12 @@ header {
   top: 20px;
   justify-content: space-between;
   max-width: var(--max-width);
-  margin: 0 20px;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
   .nav-container {
-    column-gap: 16px;
+    column-gap: 24px;
     > a {
       display: inline-flex;
       svg {

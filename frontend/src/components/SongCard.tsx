@@ -18,8 +18,9 @@ const SongCard: FC<SongCardProps> = ({ song }) => {
       />
       <div className="detail column">
         <h3>{song.title}</h3>
-        <h4>{song.artist}</h4>
-        {Boolean(song.match) && <h5>{`${song.match * 100}% matches`}</h5>}
+        <h4 className="ellipsis-text">{song.artist}</h4>
+        <h5 className="ellipsis-text">{`${song.genre} (${song.year})`}</h5>
+        {/* Boolean(song.match) && <h5>{`${song.match * 100}% matches`}</h5> */}
       </div>
     </div>
   );

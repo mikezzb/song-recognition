@@ -28,3 +28,5 @@ export function storeData(key: string, value: any) {
 export function clearStore() {
   localStorage.clear();
 }
+
+export const strToBase64 = (str: string) => `data:image/png;base64, ${str}`;

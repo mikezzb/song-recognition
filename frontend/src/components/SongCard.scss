@@ -1,6 +1,7 @@
 .song.card {
   padding: var(--sp);
   column-gap: 18px;
+  width: 460px;
   .cover {
     width: 180px;
     height: 180px;
@@ -18,6 +19,6 @@
   }
   h5 {
     margin: 0;
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
