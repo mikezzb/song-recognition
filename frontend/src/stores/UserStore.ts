@@ -1,5 +1,5 @@
 import { makeObservable, action, observable } from 'mobx';
-import { Mode } from '../types';
+import { Mode, Song } from '../types';
 import StorePrototype from './StorePrototype';
 
 const LOAD_KEYS = ['history', 'mode'];
@@ -27,6 +27,11 @@ class UserStore extends StorePrototype {
   get qbhHistory() {
     return this.history.filter(song => song.mode === Mode.QBH);
   }
+  get currentHistory() {
+    return this.mode === Mode.FINGERPRINT
+      ? this.fingerprintHistory
+      : this.qbhHistory;
+  }
 
   @action init() {
     this.loadStore();
@@ -37,6 +42,16 @@ class UserStore extends StorePrototype {
       'mode',
       this.mode === Mode.FINGERPRINT ? Mode.QBH : Mode.FINGERPRINT
     );
+  }
+
+  @action appendHistory(song: Song) {
+    this.updateStore('history', [
+      ...this.history,
+      {
+        ...song,
+        mode: this.mode,
+      },
+    ]);
   }
 }
 

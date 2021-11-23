@@ -1,12 +1,4 @@
 .homepage {
-  --bg: #181818;
-  --surface: #222;
-  --bg-1: #2196f3;
-  --bg-2: rgba(124, 111, 211, 1);
-  --accent-1: #f50057;
-  --accent-3: #e21061;
-  --accent-2: #4fb3ff;
-  background: var(--bg);
   .query-btn {
     width: 110px;
     height: 110px;
@@ -27,7 +19,7 @@
   }
   .banner-text {
     margin-bottom: 52px;
-    &::before {
+    &.deco-line::before {
       display: flex;
       content: "";
       height: 4px;
