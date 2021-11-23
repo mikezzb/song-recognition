@@ -1,0 +1,23 @@
+.song.card {
+  padding: var(--sp);
+  column-gap: 18px;
+  .cover {
+    width: 180px;
+    height: 180px;
+    border-radius: 6px;
+    background-position: center center;
+    background-size: cover;
+  }
+  h3 {
+    margin: 4px 0 14px 0;
+  }
+  h4 {
+    font-size: 14px;
+    margin: 12px 0;
+    opacity: 0.7;
+  }
+  h5 {
+    margin: 0;
+    opacity: 0.5;
+  }
+}
