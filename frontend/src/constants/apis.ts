@@ -15,3 +15,8 @@ export const QUERY_BY_HUMMING: AxiosRequestConfig = {
     'content-type': 'multipart/form-data',
   },
 };
+
+export const GET_SONGS: AxiosRequestConfig = {
+  method: 'get',
+  url: '/songs',
+};
