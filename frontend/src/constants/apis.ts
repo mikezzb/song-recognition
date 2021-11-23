@@ -7,3 +7,11 @@ export const RECOGNIZE: AxiosRequestConfig = {
     'content-type': 'multipart/form-data',
   },
 };
+
+export const QUERY_BY_HUMMING: AxiosRequestConfig = {
+  method: 'post',
+  url: '/songs/query-by-humming',
+  headers: {
+    'content-type': 'multipart/form-data',
+  },
+};

@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 
 // Main
 export const RECORDER_BIT_RATE = 192;
-export const RECORD_SECONDS = 10;
+export const RECORD_SECONDS = 6;
 
 // Axios
 export const SERVER_ADDRESS =

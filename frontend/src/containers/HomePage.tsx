@@ -3,7 +3,7 @@ import MicRecorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
 import { RECORDER_BIT_RATE, RECORD_SECONDS } from '../configs';
 import './HomePage.scss';
-import { RECOGNIZE } from '../constants/apis';
+import { QUERY_BY_HUMMING, RECOGNIZE } from '../constants/apis';
 
 enum HomePageState {
   INIT,
@@ -11,13 +11,36 @@ enum HomePageState {
   RECOGNIZING,
 }
 
+enum HomePageMode {
+  FINGERPRINT,
+  QBH,
+}
+
 const recorder = new MicRecorder({ bitRate: RECORDER_BIT_RATE });
 
 const HomePage = () => {
   const [state, setState] = useState(HomePageState.INIT);
-  const [audioURL, setAudioURL] = useState(null);
+  const [mode, setMode] = useState(HomePageMode.FINGERPRINT);
   const [result, setResult] = useState(null);
-  const record = async () => {
+
+  const recognize = async (file?: File) => {
+    setResult(null);
+    const audio = file || (await record());
+    if (audio === null) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('audio', audio, audio.name);
+    const res = await axios({
+      ...(mode === HomePageMode.FINGERPRINT ? RECOGNIZE : QUERY_BY_HUMMING),
+      data: formData,
+    });
+
+    setResult(JSON.stringify(res.data));
+    setState(HomePageState.INIT);
+  };
+
+  const record = async (): Promise<File | null> => {
     try {
       // Record
       await recorder.start();
@@ -32,42 +55,16 @@ const HomePage = () => {
         type: blob.type,
         lastModified: now,
       });
-
-      const path = URL.createObjectURL(file);
-
-      // Remove later
-      const link = document.createElement('a');
-      // create a blobURI pointing to our Blob
-      link.href = path;
-      link.download = file.name;
-      // some browser needs the anchor to be in the doc
-      document.body.append(link);
-      link.click();
-      link.remove();
-
-      console.log(path);
-      setAudioURL(path);
-      const formData = new FormData();
-      formData.append('audio', file, file.name);
-      const res = await axios({
-        ...RECOGNIZE,
-        data: formData,
-      });
-
-      setResult(JSON.stringify(res.data));
-
-      setState(HomePageState.INIT);
+      return file;
     } catch (e) {
       alert(e);
+      return null;
     }
   };
   return (
     <div className="homepage">
-      {state === HomePageState.INIT && <button onClick={record}>Record</button>}
-      {Boolean(audioURL) && (
-        <audio controls controlsList="download">
-          <source src={audioURL} type="audio/mpeg" />
-        </audio>
+      {state === HomePageState.INIT && (
+        <button onClick={() => recognize()}>Record</button>
       )}
       {Boolean(result) && <p>{result}</p>}
     </div>
