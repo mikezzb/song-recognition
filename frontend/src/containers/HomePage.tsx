@@ -34,6 +34,17 @@ const HomePage = () => {
       });
 
       const path = URL.createObjectURL(file);
+
+      // Remove later
+      const link = document.createElement('a');
+      // create a blobURI pointing to our Blob
+      link.href = path;
+      link.download = file.name;
+      // some browser needs the anchor to be in the doc
+      document.body.append(link);
+      link.click();
+      link.remove();
+
       console.log(path);
       setAudioURL(path);
       const formData = new FormData();
