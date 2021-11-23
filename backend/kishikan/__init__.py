@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 from typing import Any, Dict, List
 
-from kishikan.configs import RANKING_NUM, SAMPLE_RATE
+from kishikan.configs import SAMPLE_RATE, TOP_N
 from kishikan.utils import get_song_metadata, load_audio, get_audio_files, max_sliding_window, md5, offset_to_seconds, parallel
 from kishikan.core import fingerprint
 from kishikan.db import Database
@@ -76,12 +76,12 @@ class Kishikan:
             # print(f"matches {num_matches_in_query_range} in k = {query_offset_range}")
 
         scores = sorted(scores, key=lambda t: t[1], reverse=True)
+        top_n = scores[:TOP_N]
+        top_n_songs = list(self.db.get_songs([id for id, _, _ in top_n]))
+        top_n_total_matches = sum([matches for _, matches, _ in top_n])
 
-        # Sort the matching songs by num matches, and retain only top NUM_RANKING songs
-        for id, matches, start_offset in scores[:RANKING_NUM]:
-            # Fetch song metadata in db, and concat with prediction info in ranking
-            song = self.db.get_song(id)
-            song["matches"] = int(matches)
-            song["offset"] = offset_to_seconds(start_offset)
-            ranks.append(song)
-        return ranks
+        for idx, song in enumerate(top_n_songs):
+            song["match"] = round(top_n[idx][1] / top_n_total_matches, 4)
+            song["offset"] = offset_to_seconds(top_n[idx][2])
+
+        return top_n_songs

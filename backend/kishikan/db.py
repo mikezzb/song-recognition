@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
+import numpy as np
 from pymongo import MongoClient
 
 from kishikan.configs import DATA_CONFIGS, QUERY_BATCH_SIZE
@@ -43,6 +44,9 @@ class Database:
 
     def get_song(self, id) -> dict:
         return self.metadata.find_one({"_id": id}, {"extra": 0})
+
+    def get_songs(self, ids: np.ndarray) -> dict:
+        return self.metadata.find({"_id": {"$in": ids}}, {"extra": 0})
 
     def match_fingerprints(self, fps: List[Fingerprint]) -> Tuple[list, Dict[str, Dict[str, int]]]:
         hash_offset_map = defaultdict(list)
