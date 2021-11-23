@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import MicRecorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
+import { IconButton, Typography } from '@material-ui/core';
+import { AudiotrackRounded } from '@material-ui/icons';
+
 import { RECORDER_BIT_RATE, RECORD_SECONDS } from '../configs';
 import './HomePage.scss';
 import { QUERY_BY_HUMMING, RECOGNIZE } from '../constants/apis';
+import Header from '../components/Header';
 
 enum HomePageState {
   INIT,
@@ -62,10 +66,18 @@ const HomePage = () => {
     }
   };
   return (
-    <div className="homepage">
-      {state === HomePageState.INIT && (
-        <button onClick={() => recognize()}>Record</button>
-      )}
+    <div className="homepage page center">
+      <Header />
+      <div className="column center">
+        <Typography className="banner-text" variant="h2" component="div">
+          Tap to recognize your song
+        </Typography>
+        {state === HomePageState.INIT && (
+          <IconButton className="query-btn" onClick={() => recognize()}>
+            <AudiotrackRounded />
+          </IconButton>
+        )}
+      </div>
       {Boolean(result) && <p>{result}</p>}
     </div>
   );
