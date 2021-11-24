@@ -54,3 +54,6 @@ export const getMMMDD = (timestamp: number) => {
     date.getHours()
   )}:${addZero(date.getMinutes())}`;
 };
+
+export const secondsToMMSS = (seconds: number) =>
+  new Date(seconds * 1000).toISOString().substr(14, 5);

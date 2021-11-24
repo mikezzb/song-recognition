@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Song, QueryHistory } from '../types';
-import { strToBase64, getMMMDD } from '../utils';
+import { strToBase64, getMMMDD, secondsToMMSS } from '../utils';
 import './SongCard.scss';
 
 type SongCardProps = {
@@ -19,12 +19,11 @@ const SongCard: FC<SongCardProps> = ({ song }) => {
       <div className="detail column">
         <h3>{song.title}</h3>
         <h4 className="ellipsis-text">{song.artist}</h4>
-        <h5 className="ellipsis-text">
-          {'date' in song
-            ? getMMMDD(song.date)
-            : `${song.genre} (${song.year})`}
-        </h5>
-        {/* Boolean(song.match) && <h5>{`${song.match * 100}% matches`}</h5> */}
+        {Boolean(song.match) && (
+          <h5>{`${Math.round(song.match * 1000) / 10}% matches, ${secondsToMMSS(
+            song.offset
+          )}`}</h5>
+        )}
       </div>
     </div>
   );
