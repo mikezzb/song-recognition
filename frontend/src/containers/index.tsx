@@ -25,7 +25,7 @@ const ROUTES = [
 const Navigator: FC = () => (
   <Router>
     <div className="App">
-    <Header />
+      <Header />
       <Switch>
         {ROUTES.map(route => (
           <Route key={JSON.stringify(route?.props?.path)} {...route.props} />

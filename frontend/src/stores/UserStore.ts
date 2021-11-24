@@ -46,11 +46,12 @@ class UserStore extends StorePrototype {
 
   @action appendHistory(song: Song) {
     this.setStore('history', [
-      ...this.history,
       {
         ...song,
         mode: this.mode,
+        date: +new Date(),
       },
+      ...this.history,
     ]);
   }
 }

@@ -30,3 +30,27 @@ export function clearStore() {
 }
 
 export const strToBase64 = (str: string) => `data:image/png;base64, ${str}`;
+
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+const addZero = (digit: number) => (digit > 9 ? digit : `0${digit}`);
+
+export const getMMMDD = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return `${MONTHS[date.getMonth()]} ${date.getDate()}, ${addZero(
+    date.getHours()
+  )}:${addZero(date.getMinutes())}`;
+};

@@ -18,4 +18,5 @@ export interface Song {
 
 export interface QueryHistory extends Song {
   mode: Mode;
+  date: number;
 }
