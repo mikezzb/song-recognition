@@ -27,7 +27,7 @@ class Kishikan:
             if audio_md5 in self.song_hashes:
                 if self.verbose:
                     print(f'Skipped duplicated fingerprinting for {file_path}...')
-                return
+                continue
             try:
                 print(f"Fingerprinting for {file_name}{file_ext}...")
                 y, sr = load_audio(file_path)
@@ -40,7 +40,7 @@ class Kishikan:
                     meta["ext"] = file_ext
                 else:
                     meta = None
-                self.db.insert_song(audio_md5, num_fps, meta=meta)
+                self.db.insert_song(audio_md5, num_fps, file_name, meta)
                 self.db.insert_fingerprints(fps, audio_md5)
             except Exception as e:
                 traceback.print_exc()

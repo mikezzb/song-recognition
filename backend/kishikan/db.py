@@ -23,13 +23,16 @@ class Database:
             "offset": int(offset),  # type cast np.int64 to normal int
         } for fp_hash, offset in fps])
 
-    def insert_song(self, id: str, num_fps: int, meta):
-        meta["_id"] = id
-        self.songs.insert({
+    def insert_song(self, id: str, num_fps: int, title: str, meta: dict):
+        song = {
             "_id": id,
             "num_fingerprints": num_fps
-        })
+        }
+        if not meta:
+            song["title"] = title
+        self.songs.insert(song)
         if meta:
+            meta["_id"] = id
             self.metadata.insert(meta)
 
     def get_song_hashes(self) -> List[str]:

@@ -25,8 +25,8 @@ def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks
             label, duration, offset = _gtzan_query_label_split(file_name)
             rank = ksk.match(file_path, meta=False)
             # Find the rank of label in predictions, None if not in top n
-            label_index = next((idx for (idx, d) in enumerate(rank) if d["name"] == label), None) if rank else None
-            pred_label = rank[0]["name"]
+            label_index = next((idx for (idx, d) in enumerate(rank) if d["title"] == label), None) if rank else None
+            pred_label = rank[0]["title"]
             if verbose:
                 print(f"({idx}/{num_query_files}) ({round(hits[0] / (idx + 1), 3)}) Result for {file_name} ({pred_label == label}): {pred_label}")
             if label_index is None or label_index > FAIL_RECORD_THREHOLD:

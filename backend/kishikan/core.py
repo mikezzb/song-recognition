@@ -1,3 +1,4 @@
+from collections import defaultdict
 import hashlib
 import librosa
 from typing import List
@@ -10,6 +11,8 @@ from kishikan.configs import AMP_MIN, FAN_VALUE, FFT_OVERLAP_RATIO, FFT_WSIZE, L
 
 FREQ_INDEX = 0
 TIME_INDEX = 1
+
+MAX_FRAME_PEAKS = 3
 
 # Generate audio fingerprint from audio timeseries
 def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprint]:
@@ -30,15 +33,27 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON, exclude_border=False)
     # Filter out noise peaks with amp lower than amp min
     amps = im[tuple(peaks.T)]
+    # print(amps.shape)
+    # print(peaks.shape)
     peaks = peaks[amps > AMP_MIN]
+    max_peaks = defaultdict(lambda: {
+        "max_amp": 0,
+    })
+    for idx, peak in enumerate(peaks):
+        if amps[idx] > max_peaks[peak[0]]["max_amp"]:
+            max_peaks[peak[0]]["max_amp"] = amps[idx]
+            max_peaks[peak[0]]["peak"] = peak
+    # print(peaks.shape)
+    peaks = np.array([d["peak"] for d in max_peaks.values()])
+    # print(peaks)
     # plt the peaks
     if verbose:
         print(f'Detected peaks {peaks.shape}')
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(14, 14))
         plt.imshow(im)
-        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=1)
+        plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=4)
         plt.gca().invert_yaxis()
-        plt.title('Spectrogram')
+        plt.title('Dua Lipa - Levitating')
         plt.ylabel('Frequency')
         plt.xlabel('Time')
         plt.show()
@@ -59,6 +74,7 @@ def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
             if (i + j) < n:
                 t1 = peaks[i][TIME_INDEX]
                 t2 = peaks[i + j][TIME_INDEX]
+                print(f"{t1} {t2}")
                 t_delta = t2 - t1
                 if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:  
                     f1 = peaks[i][FREQ_INDEX]

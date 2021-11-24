@@ -33,7 +33,7 @@ def max_sliding_window(nums: np.ndarray, k: int):
         if i >= k-1 and nums[d[0]] > cur_max:
             cur_max = nums[d[0]]
             cur_max_index = i
-    return cur_max, cur_max_index - k
+    return cur_max, cur_max_index
 
 def parallel(f: Callable, iter: List):
     return list(map(f, iter))
