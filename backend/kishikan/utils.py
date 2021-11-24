@@ -19,20 +19,21 @@ def load_audio(file: Union[str, SpooledTemporaryFile], offset=0.0, duration=None
     return librosa.load(file, sr=SAMPLE_RATE, mono=MONO, offset=offset, duration=duration)
 
 def max_sliding_window(nums: np.ndarray, k: int):
-    end_index = k
     if k == 1:
         return nums
     d = deque()
-    res = []
+    cur_max = 0
+    cur_max_index = 0
     for i, n in enumerate(nums):
         while d and nums[d[-1]] < n:
             d.pop()
         d.append(i)
         if d[0] == i-k:
             d.popleft()
-        if i >= k-1:
-            res.append(nums[d[0]])
-    return sum(res), end_index - k
+        if i >= k-1 and nums[d[0]] > cur_max:
+            cur_max = nums[d[0]]
+            cur_max_index = i
+    return cur_max, cur_max_index - k
 
 def parallel(f: Callable, iter: List):
     return list(map(f, iter))
