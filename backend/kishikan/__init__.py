@@ -46,7 +46,7 @@ class Kishikan:
                 traceback.print_exc()
                 print(f'Failed to fingerprint {file_path}:\n{e}')
 
-    def match(self, audio, preloaded=False) -> List[Dict[str, Any]]:
+    def match(self, audio, preloaded=False, meta=True) -> List[Dict[str, Any]]:
         # Fingerprint the input song
         y, sr = audio if preloaded else load_audio(audio)
         fps = fingerprint(y, sr=sr, verbose=self.verbose)
@@ -82,7 +82,7 @@ class Kishikan:
         # Sort the matching songs by num matches, and retain only top NUM_RANKING songs
         for id, matches, start_offset in top_n:
             # Fetch song metadata in db, and concat with prediction info in ranking
-            song = self.db.get_song(id)
+            song = self.db.get_song(id, meta=meta)
             song["match"] = round(matches / top_n_total_matches, 4)
             song["offset"] = offset_to_seconds(start_offset)
             ranks.append(song)

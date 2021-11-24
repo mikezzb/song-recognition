@@ -42,8 +42,8 @@ class Database:
         ]))
         return [song["_id"] for song in songs]
 
-    def get_song(self, id) -> dict:
-        return self.metadata.find_one({"_id": id}, {"extra": 0})
+    def get_song(self, id, meta) -> dict:
+        return (self.metadata if meta else self.songs).find_one({"_id": id}, {"extra": 0})
 
     def get_songs(self, ids: np.ndarray) -> dict:
         return self.metadata.find({"_id": {"$in": ids}}, {"extra": 0})
