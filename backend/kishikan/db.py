@@ -59,8 +59,6 @@ class Database:
         songs_matches = defaultdict(lambda: {
             "matches": 0,
             "offsets": defaultdict(lambda: 0),
-            "max_offset": 0,
-            "min_offset": 0
         })
         for i in range(0, len(hashes), QUERY_BATCH_SIZE):
             items = list(self.fingerprints.find({
@@ -72,10 +70,6 @@ class Database:
                 fp_song = songs_matches[fp["song_id"]]
                 for offset in hash_offset_map[fp["fp_hash"]]:
                     match_offset = fp["offset"] - offset
-                    if match_offset < fp_song["min_offset"]:
-                        fp_song["min_offset"] = match_offset
-                    if match_offset > fp_song["max_offset"]:
-                        fp_song["max_offset"] = match_offset
                     fp_song["offsets"][match_offset] += 1
                     fp_song["matches"] += 1
         return songs_matches

@@ -55,35 +55,21 @@ class Kishikan:
             return None
         # Find matching songs in db
         songs_occ = self.db.match_fingerprints(fps)
-        # Rank songs
-        query_offset_min = min(fps, key=lambda t: t[1])[1]
-        query_offset_max = max(fps, key=lambda t: t[1])[1]
-        query_offset_range = query_offset_max - query_offset_min
-
-        scores = []
-        ranks = []
-
+        rank = []
         for id, stat in songs_occ.items():
-            match_offsets_range = stat["max_offset"] - stat["min_offset"]
-            counts = np.full(match_offsets_range + 1, 0)
-            # convert offset-offset_matches dict to array with count or 0 as element
-            for offset, matches in stat["offsets"].items():
-                counts[offset - stat["min_offset"]] = matches
-            num_matches_in_query_range, start_offset = max_sliding_window(counts, query_offset_range)
-            scores.append((id, num_matches_in_query_range, start_offset))
-            # print(stat)
-            # print(num_matches_in_query_range)
-            # print(f"matches {num_matches_in_query_range} in k = {query_offset_range}")
-
-        scores = sorted(scores, key=lambda t: t[1], reverse=True)
-        top_n = scores[:TOP_N]
+            if stat["matches"] <= 2:
+                continue
+            max_offset_pair = max(stat["offsets"].items(), key=lambda k: k[1])
+            # print(stat["offsets"])
+            rank.append((id, max_offset_pair[1], max_offset_pair[0]))
+        top_n = sorted(rank, key=lambda t: t[1], reverse=True)[:TOP_N]
         top_n_total_matches = sum([matches for _, matches, _ in top_n])
-
+        top_n_songs = []
         # Sort the matching songs by num matches, and retain only top NUM_RANKING songs
         for id, matches, start_offset in top_n:
             # Fetch song metadata in db, and concat with prediction info in ranking
             song = self.db.get_song(id, meta=meta)
             song["match"] = round(matches / top_n_total_matches, 4)
             song["offset"] = offset_to_seconds(start_offset)
-            ranks.append(song)
-        return ranks
+            top_n_songs.append(song)
+        return top_n_songs
