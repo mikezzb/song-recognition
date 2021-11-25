@@ -23,10 +23,12 @@ def benchmark(nz: Nazo, query_dirname, output_dirname="../results_qbh", remarks=
     for idx, (file_path, file_name, file_ext) in enumerate(query_files):
         try:
             label = file_name
+            # print(file_path)
             rank = nz.query(file_path)
+            # print(rank)
             # Find the rank of label in predictions, None if not in top n
-            label_index = next((idx for (idx, d) in enumerate(rank) if d[0] == label), None) if rank else None
-            pred_label = rank[0][0]
+            label_index = next((idx for (idx, d) in enumerate(rank) if d["label"] == label), None) if rank else None
+            pred_label = rank[0]["label"]
             if verbose:
                 print(f"({idx}/{num_query_files}) ({round(hits[0] / (idx + 1), 3)}) Result for {file_name} ({pred_label == label}): {pred_label}")
             if label_index is None or label_index > FAIL_RECORD_THREHOLD:

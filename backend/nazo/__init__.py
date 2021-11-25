@@ -1,10 +1,13 @@
 import warnings
 from typing import Any, Dict, List
+
+from numpy.core.fromnumeric import sort
 from nazo.configs import TOP_N
 from nazo.utils import load_audio, md5
 from nazo.core import audio_to_pitches, midi_to_pitches, pitches_to_series, score
 from nazo.utils import get_audio_files
 from nazo.db import Database
+import numpy as np
 
 # Ignore librosa load mp3 warning
 warnings.filterwarnings('ignore')
@@ -24,11 +27,14 @@ class Nazo:
         print(f"Loaded pitches of {len(self.song_hashes)} songs.")
 
     def make_midi_database(self, path, is_dir=True):
-        for file_path, file_name, _ in get_audio_files(path, is_dir=is_dir, extensions=set(['.mid'])):
+        song_list = np.loadtxt(f'{path}/songList.txt', delimiter='\n', dtype=str)
+        # print(song_list.shape)
+        for idx, (file_path, file_name, _) in enumerate(sorted(get_audio_files(path, is_dir=is_dir, extensions=set(['.mid'])), key=lambda l: l[1])):
+            title = ' '.join(song_list[idx].split('\t')[1:3]).strip('-')
             song_id = md5(file_path)
             if song_id not in self.song_hashes:
                 pitches = midi_to_pitches(file_path)
-                self.db.insert_pitches(song_id, pitches, file_name)
+                self.db.insert_pitches(song_id, pitches, title, file_name)
                 self.song_hashes.add(song_id)
             else:
                 if self.verbose:
@@ -42,6 +48,10 @@ class Nazo:
         for song in self.pitches:
             dist = score(query_pitches, song["pitches"])
             # print((song["_id"], dist))
-            results.append((song["title"], dist))
-        results = sorted(results, key=lambda t: t[1])
-        return results[0:TOP_N]
+            results.append({
+                "title": song["title"],
+                "dist": dist,
+                "label": song["label"]
+            })
+        results = sorted(results, key=lambda d: d["dist"])
+        return results[0: TOP_N]
