@@ -3,7 +3,6 @@ import hashlib
 import librosa
 from typing import List
 import numpy as np
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from skimage.feature import peak_local_max
 from kishikan.types import Fingerprint
@@ -36,6 +35,7 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     # print(amps.shape)
     # print(peaks.shape)
     peaks = peaks[amps > AMP_MIN]
+    """
     max_peaks = defaultdict(lambda: {
         "max_amp": 0,
     })
@@ -47,6 +47,7 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     peaks = np.array([d["peak"] for d in max_peaks.values()])
     # print(peaks)
     # plt the peaks
+    """
     if verbose:
         print(f'Detected peaks {peaks.shape}')
         plt.figure(figsize=(14, 14))
@@ -74,7 +75,6 @@ def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
             if (i + j) < n:
                 t1 = peaks[i][TIME_INDEX]
                 t2 = peaks[i + j][TIME_INDEX]
-                print(f"{t1} {t2}")
                 t_delta = t2 - t1
                 if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:  
                     f1 = peaks[i][FREQ_INDEX]

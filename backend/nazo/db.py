@@ -23,10 +23,11 @@ class Database:
         ]))
         return [song["_id"] for song in songs]
 
-    def insert_pitches(self, id, pitches, title):
+    def insert_pitches(self, id, pitches, title, label):
         self.pitches.insert({
             "_id": id,
             "pitches": pitches,
+            "label": label,
             "title": title,
         })
 
