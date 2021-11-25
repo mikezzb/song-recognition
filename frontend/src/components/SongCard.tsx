@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Song, QueryHistory } from '../types';
-import { strToBase64, getMMMDD, secondsToMMSS } from '../utils';
+import { strToBase64, secondsToMMSS } from '../utils';
 import './SongCard.scss';
 
 type SongCardProps = {
@@ -12,7 +12,9 @@ const SongCard: FC<SongCardProps> = ({ song }) => {
     <div className="song card row">
       <span
         style={{
-          backgroundImage: `url("${strToBase64(song.cover)}")`,
+          backgroundImage: song.cover
+            ? `url("${strToBase64(song.cover)}")`
+            : `url('/default_cover.png')`,
         }}
         className="cover"
       />

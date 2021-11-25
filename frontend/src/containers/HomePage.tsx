@@ -55,7 +55,7 @@ const HomePage = () => {
 
     setResult(res.data);
     setState(HomePageState.RESULT);
-    if (res.data?.length !== 0) {
+    if (res.data && res.data.length !== 0) {
       user.appendHistory(res.data[0]);
     }
   };
@@ -73,6 +73,17 @@ const HomePage = () => {
         type: blob.type,
         lastModified: now,
       });
+
+      // Remove later
+      const link = document.createElement('a');
+      // create a blobURI pointing to our Blob
+      const path = URL.createObjectURL(file);
+      link.href = path;
+      link.download = file.name;
+      // some browser needs the anchor to be in the doc
+      document.body.append(link);
+      link.click();
+      link.remove();
       return file;
     } catch (e) {
       alert(e);

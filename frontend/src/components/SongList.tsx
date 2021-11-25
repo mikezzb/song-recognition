@@ -21,7 +21,7 @@ const SongList: FC<SongListProps> = ({ songs, wrap, loading }) => {
         <span>No songs yet~</span>
       ) : (
         songs.map(song => (
-          <SongCard key={`${song._id}${song.date}`} song={song} />
+          <SongCard key={`${song._id}${song.date}${song.title}`} song={song} />
         ))
       )}
     </div>
