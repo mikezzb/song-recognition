@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "bdb914e8-82df-4c6c-a3a1-0252282b1600",
+		"name": "Kishikan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Recognize Song",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "audio",
+							"type": "file",
+							"src": "/home/mike/Documents/Github/fullstack/kishikan/tests/fp/Happier Than Ever.mp3"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{address}}/songs/recognize",
+					"host": [
+						"{{address}}"
+					],
+					"path": [
+						"songs",
+						"recognize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query by Humming",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "audio",
+							"type": "file",
+							"src": "/home/mike/Documents/Github/fullstack/kishikan/tests/qbh/10 Little Indian.mp3"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{address}}/songs/query-by-humming",
+					"host": [
+						"{{address}}"
+					],
+					"path": [
+						"songs",
+						"query-by-humming"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Play Song",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{address}}/player/Billie Eilish - Happier Than Ever.mp3",
+					"host": [
+						"{{address}}"
+					],
+					"path": [
+						"player",
+						"Billie Eilish - Happier Than Ever.mp3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Songs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{address}}/songs?mode=1",
+					"host": [
+						"{{address}}"
+					],
+					"path": [
+						"songs"
+					],
+					"query": [
+						{
+							"key": "mode",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

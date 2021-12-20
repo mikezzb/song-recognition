@@ -1,3 +1,4 @@
+fastdtw==0.3.4
 Flask==2.0.2
 Flask_Cors==3.0.10
 Flask_RESTful==0.3.9
@@ -10,5 +11,6 @@ pydub==0.25.1
 pymongo==3.12.0
 python-dotenv==0.19.2
 scikit_image==0.18.3
+scipy==1.7.0
 tinytag==1.6.0
 Werkzeug==2.0.1
