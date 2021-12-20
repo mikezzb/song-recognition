@@ -3,15 +3,20 @@ from datetime import datetime
 import json
 import os
 import time
+import random
 from types import ModuleType
+import librosa
 
 from kishikan import Kishikan
 import kishikan.configs as configs
-from kishikan.utils import get_audio_files
+from kishikan.utils import get_audio_files, load_audio
 
 FAIL_RECORD_THREHOLD = 3  # i.e. when label is not in top 3, record FAIL
 
-def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks=None, verbose=False):
+def random_float(low, high):
+    return random.random()*(high - low) + low
+
+def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks=None, verbose=False, tempo=None):
     s = time.time()
     now = datetime.now(tz=None).strftime("%d_%m_%Y_%H:%M")
     query_files = get_audio_files(query_dirname)
@@ -23,7 +28,14 @@ def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks
     for idx, (file_path, file_name, file_ext) in enumerate(query_files):
         try:
             label, duration, offset = _gtzan_query_label_split(file_name)
-            rank = ksk.match(file_path, meta=False)
+            rate = 1
+            if tempo:
+                rate = 1+tempo if random.getrandbits(1) else 1-tempo
+                y, sr = load_audio(file_path)
+                y = librosa.effects.time_stretch(y, rate)
+                rank = ksk.match((y, sr), preloaded=True, meta=False)
+            else:
+                rank = ksk.match(file_path, meta=False)
             # Find the rank of label in predictions, None if not in top n
             label_index = next((idx for (idx, d) in enumerate(rank) if d["title"] == label), None) if rank else None
             pred_label = rank[0]["title"]
@@ -36,6 +48,7 @@ def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks
                     "label": label,
                     "duration": duration,
                     "offset": offset,
+                    "tempo_rate": rate
                 })
             else:
                 hits[label_index] += 1
@@ -53,6 +66,7 @@ def benchmark(ksk: Kishikan, query_dirname, output_dirname="../results", remarks
         "duration": round(time.time() - s, 5),
         "configs": _configs_to_json(configs),
         "remarks": remarks,
+        "tempo": tempo if tempo else 1,
     }
     with open(os.path.join(output_dirname, f"summary-{now}.json"), 'w') as f:
         json.dump(summary, f, indent=2)
