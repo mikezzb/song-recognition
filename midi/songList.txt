@@ -1,0 +1,48 @@
+00001	I'm the teapot	-	19
+00002	I've been working on the railroad	-	14
+00003	hictory dickory dock	-	11
+00004	humpty dumpty	-	15
+00005	merrily we roll along	-	15
+00006	six little ducks	-	12
+00007	skip to my lou	-	15
+00008	the farmer in the dell	-	15
+00009	wheels on the bus	-	12
+00010	yankee doodle	-	19
+00011	Ten Little Indians	十個印第安人	96
+00012	-	三輪車	154
+00013	-	小毛驢	161
+00014	Twinkle, Twinkle, Little Star	小星星	159
+00015	I'm a Little Teapot	小茶壺	27
+00016	-	火車快飛	160
+00017	Old MacDonald Had a Farm	王老先生有塊地	152
+00018	-	世上只有媽媽好	164
+00019	-	只要我長大	158
+00020	Happy Birthday	生日快樂	170
+00021	-	西風的話	66
+00022	Brother John (Are you sleeping?)	兩隻老虎	173
+00023	-	明天會更好	62
+00024	Clay Doll (Niwawa)	泥娃娃	121
+00025	-	虎姑婆	123
+00026	-	長城謠	52
+00027	-	青春舞曲	85
+00028	-	秋蟬	91
+00029	Jasmine	茉莉花	150
+00030	London Bridge Is Falling Down	倫敦鐵橋垮下來	145
+00031	-	捕魚歌	141
+00032	-	捉泥鰍	137
+00033	-	高山青	116
+00034	Home, Sweet Home	甜蜜的家庭	137
+00035	-	魚兒魚兒水中游	149
+00036	Oh! Suzanna	喔，蘇珊娜	43
+00037	-	童年	66
+00038	-	萍聚	114
+00039	Oh du lieber Augustin	當我們同在一起	147
+00040	-	遊子吟	71
+00041	This Old Man	綠油精	126
+00042	-	潑水歌	92
+00043	-	蝴蝶	123
+00044	-	蝸牛與黃鸝鳥	80
+00045	Slop Water (Hu-laa)	魯啦啦	99
+00046	-	龍的傳人	92
+00047	Polly Wolly Doodle	懶惰蟲	29
+00048	-	歡樂年華	53
