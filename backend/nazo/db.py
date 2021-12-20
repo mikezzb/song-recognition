@@ -1,9 +1,6 @@
-from collections import defaultdict
-from typing import Dict, List, Tuple
-from librosa.core import pitch
+from typing import List
 from pymongo import MongoClient
-
-from nazo.configs import DATA_CONFIGS
+from nazo.configs import DATA_CONFIGS, MODE
 
 class Database:
     def __init__(self, uri: str, name: str) -> None:
@@ -23,13 +20,12 @@ class Database:
         ]))
         return [song["_id"] for song in songs]
 
-    def insert_pitches(self, id, pitches, title, label):
-        self.pitches.insert({
-            "_id": id,
-            "pitches": pitches,
-            "label": label,
-            "title": title,
-        })
+    def insert_pitches(self, pitches: list, meta: dict, save_meta: bool):
+        meta["mode"] = MODE
+        if save_meta:
+            self.metadata.insert(meta)
+        meta["pitches"] = pitches
+        self.pitches.insert(meta)
 
     def load_all_pitches(self):
         return self.pitches.find({})

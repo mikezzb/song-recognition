@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 from typing import Any, Dict, List
 
-from kishikan.configs import SAMPLE_RATE, TOP_N
+from kishikan.configs import MODE, TOP_N
 from kishikan.utils import get_song_metadata, load_audio, get_audio_files, max_sliding_window, md5, offset_to_seconds, parallel
 from kishikan.core import fingerprint
 from kishikan.db import Database
@@ -40,6 +40,7 @@ class Kishikan:
                 if save_meta:
                     meta = get_song_metadata(file_path)
                     meta["ext"] = file_ext
+                    meta["mode"] = MODE
                 else:
                     meta = None
                 self.db.insert_song(audio_md5, num_fps, file_name, meta)

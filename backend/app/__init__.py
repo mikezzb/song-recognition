@@ -12,11 +12,6 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
 api.add_resource(SongRecognizer, '/songs/recognize')
 api.add_resource(QueryByHummingRecognizer, '/songs/query-by-humming')
 api.add_resource(Song, '/songs')

@@ -13,7 +13,10 @@ const SongPage = () => {
   const { data: songs, isLoading: songsLoading } = useQuery({
     queryKey: GET_SONGS.url,
     queryFn: async () => {
-      const res = await axios(GET_SONGS);
+      const res = await axios({
+        ...GET_SONGS,
+        params: { mode: user.mode },
+      });
       return res.data;
     },
     enabled: location.pathname === '/song',

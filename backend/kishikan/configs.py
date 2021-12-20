@@ -1,5 +1,6 @@
 # General
 ROUNDING = 3
+MODE = 0  # Indicating Audio Fingerprinting
 
 # Audio
 AUDIO_EXTENSIONS = set(['.mp3', '.wav'])
@@ -28,3 +29,4 @@ DATA_CONFIGS = {
 }
 QUERY_BATCH_SIZE = 1000
 TOP_N = 3
+MAX_PEAKS_PER_FRAME = 5

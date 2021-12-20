@@ -1,7 +1,5 @@
 import os
 from flask_restful import abort, reqparse, Resource
-import numpy as np
-from pydub import AudioSegment
 from werkzeug.datastructures import FileStorage
 from nazo import Nazo
 from kishikan import Kishikan
@@ -39,7 +37,11 @@ class QueryByHummingRecognizer(Resource):
             print(e)
             abort(400, description='Cannot convert audio')
 
+
+parser.add_argument('mode', type=int, location='args')
+
 class Song(Resource):
     def get(self):
-        # Get all song metadata
-        return list(db.get_all_songs())
+        # Get all songs metadata
+        args = parser.parse_args()
+        return list(db.get_all_songs(args.get('mode')))

@@ -31,8 +31,6 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     peaks = peak_local_max(im, min_distance=LOCAL_MAX_EPSILON, exclude_border=False)
     # Filter out noise peaks with amp lower than amp min
     amps = im[tuple(peaks.T)]
-    # print(amps.shape)
-    # print(peaks.shape)
     peaks = peaks[amps > AMP_MIN]
 
     if MAX_PEAKS_PER_FRAME:
@@ -49,11 +47,10 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
 
     if verbose:
         print(f'Detected peaks {peaks.shape}')
-        plt.figure(figsize=(14, 14))
+        plt.figure(figsize=(10, 10))
         plt.imshow(im)
         plt.scatter(peaks[:, TIME_INDEX], peaks[:, FREQ_INDEX], c='#DC143C', s=4)
         plt.gca().invert_yaxis()
-        plt.title('Dua Lipa - Levitating')
         plt.ylabel('Frequency')
         plt.xlabel('Time')
         plt.show()

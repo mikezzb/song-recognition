@@ -14,8 +14,8 @@ class Database:
     def get_songs(self, ids: np.ndarray) -> dict:
         return self.metadata.find({"_id": {"$in": ids}}, {"extra": 0})
 
-    def get_all_songs(self) -> dict:
-        return self.metadata.find({}, {"extra": 0})
+    def get_all_songs(self, mode) -> dict:
+        return self.metadata.find({"mode": mode}, {"extra": 0, "mode": 0})
 
 
 db = Database(os.getenv('MONGO_URI'))

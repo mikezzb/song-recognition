@@ -3,6 +3,7 @@ import librosa
 
 ROUNDING = 3
 TOP_N = 3
+MODE = 1  # Indicating QbSH
 
 # Audio
 AUDIO_EXTENSIONS = set(['.mp3', '.wav'])
@@ -15,9 +16,6 @@ DATA_CONFIGS = {
 }
 
 # Query by humming configs
-"""
-Baken, R. J. (2000). Clinical Measurement of Speech and Voice, 2nd Edition. London: Taylor and Francis Ltd. (pp. 177), ISBN 1-5659-3869-0. That in turn cites Fitch, J.L. and Holbrook, A. (1970). Modal Fundamental Frequency of Young Adults in Archives of Otolaryngology, 92, 379-382, Table 2 (p. 381).
-"""
 F_MIN = librosa.note_to_hz('E2')
 F_MAX = librosa.note_to_hz('C6')
 
