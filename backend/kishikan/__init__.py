@@ -22,14 +22,16 @@ class Kishikan:
         print(f"{len(self.song_hashes)} fingerprinted songs in db")
 
     def fingerprint(self, path, is_dir=True, save_meta=False):
-        for file_path, file_name, file_ext in get_audio_files(path, is_dir=is_dir):
+        files = get_audio_files(path, is_dir=is_dir)
+        n_files = len(files)
+        for idx, (file_path, file_name, file_ext) in enumerate(files):
             audio_md5 = md5(file_path)
             if audio_md5 in self.song_hashes:
                 if self.verbose:
                     print(f'Skipped duplicated fingerprinting for {file_path}...')
                 continue
             try:
-                print(f"Fingerprinting for {file_name}{file_ext}...")
+                print(f"({idx + 1}/{n_files}) Fingerprinting for {file_name}{file_ext}...")
                 y, sr = load_audio(file_path)
                 fps = fingerprint(y, sr=sr, verbose=self.verbose)
                 num_fps = len(fps)

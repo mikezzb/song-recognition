@@ -4,14 +4,13 @@ import librosa
 from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
+from heapq import heappush, nlargest
 from skimage.feature import peak_local_max
 from kishikan.types import Fingerprint
-from kishikan.configs import AMP_MIN, FAN_VALUE, FFT_OVERLAP_RATIO, FFT_WSIZE, LOCAL_MAX_EPSILON, SAMPLE_RATE, MIN_HASH_TIME_DELTA, MAX_HASH_TIME_DELTA, FINGERPRINT_REDUCTION
+from kishikan.configs import AMP_MIN, FAN_VALUE, FFT_OVERLAP_RATIO, FFT_WSIZE, LOCAL_MAX_EPSILON, MAX_PEAKS_PER_FRAME, SAMPLE_RATE, MIN_HASH_TIME_DELTA, MAX_HASH_TIME_DELTA, FINGERPRINT_REDUCTION
 
 FREQ_INDEX = 0
 TIME_INDEX = 1
-
-MAX_FRAME_PEAKS = 3
 
 # Generate audio fingerprint from audio timeseries
 def fingerprint(y: np.ndarray, sr=SAMPLE_RATE, verbose=False) -> List[Fingerprint]:
@@ -35,19 +34,19 @@ def _get_img_peaks(im: np.ndarray, verbose: bool):
     # print(amps.shape)
     # print(peaks.shape)
     peaks = peaks[amps > AMP_MIN]
-    """
-    max_peaks = defaultdict(lambda: {
-        "max_amp": 0,
-    })
-    for idx, peak in enumerate(peaks):
-        if amps[idx] > max_peaks[peak[0]]["max_amp"]:
-            max_peaks[peak[0]]["max_amp"] = amps[idx]
-            max_peaks[peak[0]]["peak"] = peak
-    # print(peaks.shape)
-    peaks = np.array([d["peak"] for d in max_peaks.values()])
-    # print(peaks)
-    # plt the peaks
-    """
+
+    if MAX_PEAKS_PER_FRAME:
+        max_peaks = defaultdict(lambda: [])
+        for idx, peak in enumerate(peaks):
+            heappush(max_peaks[peak[0]], (amps[idx], idx, peak))
+        new_peaks = []
+        for d in max_peaks.values():
+            for t in nlargest(MAX_PEAKS_PER_FRAME, d):
+                new_peaks.append(t[2])
+        # print(peaks.shape)
+        peaks = np.array(new_peaks)
+        # plt the peaks
+
     if verbose:
         print(f'Detected peaks {peaks.shape}')
         plt.figure(figsize=(14, 14))
@@ -76,7 +75,7 @@ def _fingerprint_hashes(peaks: np.ndarray) -> List[Fingerprint]:
                 t1 = peaks[i][TIME_INDEX]
                 t2 = peaks[i + j][TIME_INDEX]
                 t_delta = t2 - t1
-                if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:  
+                if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:
                     f1 = peaks[i][FREQ_INDEX]
                     f2 = peaks[i + j][FREQ_INDEX]
                     h = hashlib.sha1(f"{f1}|{f2 - f1}|{t_delta}".encode('utf-8'))
